@@ -8,8 +8,6 @@ import requests
 import smtplib, ssl
 from email.mime.text import MIMEText as text
 from unidecode import unidecode
-import json
-import os
 import MySQLdb
 
 html_doc = """
@@ -87,59 +85,49 @@ html_doc = """
 
 outsoup = BeautifulSoup(html_doc, 'html.parser')
 
-#Get Word ____________________________________________________________________
+#OLD LINK _______________________________________________________________________
 
-word = ''
-with open("/home/pi/Desktop/WOTD/wordList.txt", "r") as f:
-    word = f.readline()
-    lines = f.readlines()
-with open("/home/pi/Desktop/WOTD/wordList.txt", "w") as f:
-    for line in lines:
-          f.write(line)
+link = "https://www.nytimes.com/column/learning-word-of-the-day" #Get the link for today's word from the general WOTD page
+data = requests.get(link).text
+soup = BeautifulSoup(data, features="html.parser")
+mydivs = soup.findAll("div", {"class": "css-1l4spti"})
+ 
+for a in mydivs[0].find_all('a', href=True):
+    ext = a['href']
 
-word = word.strip().lower()
+#NEW LINK _______________________________________________________________________
 
-titleTag = outsoup.new_tag("h1")
-titleTag.string = word.capitalize()
-outsoup.find("div", id = "mainbody").insert_before(titleTag)
+newlink = "https://www.nytimes.com/" + ext
+newdata = requests.get(newlink).text
+newsoup = BeautifulSoup(newdata, features="html.parser")
 
-wordLog = "wordLog.txt"
-if os.path.exists(wordLog):
-    append_write = 'a' # append if already exists
-else:
-    append_write = 'w' # make a new file if not
+div_container = newsoup.find('div', class_='css-1fanzo5 StoryBodyCompanionColumn')
 
-log = open(wordLog, append_write)
-log.write(word + "\n")
-log.close()
+for tag in div_container.find_all('h2'): #Line containing the word & part of speech
+    ripped = tag.text
 
-#Definitions ___________________________________________________________________
+headLine = ripped.split("\\")
+word = headLine[0].strip()
+part = headLine[2].strip()
 
-key = "c51bab48-9a2e-4132-b5af-dbb82090c10a"
 
-#Get word data from MW
-urlfrmt = "https://dictionaryapi.com/api/v3/references/collegiate/json/" + word + "?key=" + key
-response = requests.get(urlfrmt).text
-jsStruct = json.loads(response)
+#Add in the word as a header
+mainbody = outsoup.find("div", id ="mainbody")
+tag = outsoup.new_tag("h1")
+tag.string = word.capitalize()
+mainbody.insert_before(tag)
 
-#Get first definition listed
-meaning = jsStruct[0]
-definitions = meaning['shortdef']
-part = meaning['fl']
-
-for definition in definitions:
-    defTag = outsoup.new_tag("p")
-    defTag.string = "• " + definition
-    outsoup.find("div", id = "endDef").insert_before(defTag)
 
 #IPA Lookup __________________________________________________________________
+
+msg = word.title() + "\n\nPart of Speech:\n" + part #The message that will eventaually be sent as the email body. This will be gradually added to as the program progresses
 
 logfile = open('/home/pi/Desktop/WOTD/ipa.txt', 'r')
 loglist = logfile.readlines()
 logfile.close()
 
 for line in loglist:
-    if line.startswith(word):
+    if str(word) in line:
         pronunciation = line.split("/")[1].strip()
 
         #Add in pronunciation, if applicable
@@ -150,20 +138,31 @@ for line in loglist:
         outsoup.find("div", id = "bottombar").insert_before(proTag)
         break
 
+#Definitions ___________________________________________________________________
+
+for tag in div_container.find_all('p'):  
+    if tag.text[0].isdigit() or ":" in tag.text[0:15]:
+        defTag = outsoup.new_tag("p")
+        defTag.string = tag.text
+        outsoup.find("div", id = "endDef").insert_before(defTag)
 
 #ETYMOLOGY _____________________________________________________________________
 
-link = "https://www.etymonline.com/word/" + word
+link = "https://www.etymonline.com/word/" + unidecode(word)
 data = requests.get(link).text
 soup = BeautifulSoup(data, features="html.parser")
 div_container = soup.find_all("div", {"class": "word--C9UPa"})
 
 if div_container:
-    etymTag = BeautifulSoup("<div class = base etymology><h2 id = beginEtym>Etymology:</h2><div class = etymEnd></div></div>", 'html.parser')
-    etymEnd = etymTag.find("div", {"class": "etymEnd"})
     for container in div_container:  #For each block containing a word form and etymology
+        for tag in container.find_all(attrs={"class": "word__name--TTbAA"}): #For all word form titles
+            #msg = msg + "\n" + tag.text + "\n"
+            break
+
         for body in container.find_all(attrs={"word__defination--2q7ZH"}): #Find all body sections (that contain the actual etymologies)
             #Add in etymology, if applicable
+            etymTag = BeautifulSoup("<div class = base etymology><h2 id = beginEtym>Etymology:</h2><div class = etymEnd></div></div>", 'html.parser')
+            etymEnd = etymTag.find("div", {"class": "etymEnd"})
 
             for paragraph in body.find_all("p"):
                 etymPar = soup.new_tag("p")
@@ -196,8 +195,9 @@ for email in myresult:
 	receiver_emails.append(str(email)[2:-3])
 
 
-
 #EMAIL _________________________________________________________________________
+
+#print(outsoup.prettify())
 
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
@@ -214,3 +214,4 @@ with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
     m['From'] = "Snippy The Lobster"
     m['To'] = "Snippy's Friends"
     server.sendmail(sender_email, receiver_emails, m.as_string())
+
