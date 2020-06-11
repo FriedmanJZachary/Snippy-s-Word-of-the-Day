@@ -103,7 +103,7 @@ titleTag = outsoup.new_tag("h1")
 titleTag.string = word.capitalize()
 outsoup.find("div", id = "mainbody").insert_before(titleTag)
 
-wordLog = "wordLog.txt"
+wordLog = "/home/pi/Desktop/WOTD/wordLog.txt"
 if os.path.exists(wordLog):
     append_write = 'a' # append if already exists
 else:
