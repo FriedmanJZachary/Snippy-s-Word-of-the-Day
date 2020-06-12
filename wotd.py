@@ -40,7 +40,7 @@ html_doc = """
          margin: 10px 0px;
          padding: 0px;
       }
-      
+
       p.understated {
          color: #dddddd;
          font-family: Helvetica;
@@ -48,6 +48,14 @@ html_doc = """
          margin: -10px 0px;
          padding: 0px;
          text-align: center;
+      }
+
+      a.understated {
+         color: #dddddd;
+         font-family: Helvetica;
+         font-size: 14px;
+         margin: -10px 0px;
+         padding: 0px;
       }
       
       body {
@@ -64,6 +72,11 @@ html_doc = """
          padding: 20px 10px 50px 10px;
      
       }
+
+      .nester {
+        margin: 0px 30px;
+         padding: 50px 5px 0px 5px;
+      }
       
 
    </style>
@@ -78,7 +91,13 @@ html_doc = """
   </div>
 
 <div id = bottombar>
-   <p class = understated>This email is part of a mailing list. If you would like to be removed from it or wish to subscribe another email address, please send a request to snippythelobster@gmail.com</p>
+   <p class = understated>This email is part of a mailing list. If you would like to be removed from it or wish to subscribe another email address, please use one of the following links:</p>
+ 
+
+   <div class = nester>
+      <a class = understated style="float: left;" href="http://snippy.hopto.org:54321/unsubscribePage">unsubscribe</a>
+      <a class = understated style="float: right;" href="http://snippy.hopto.org:54321/subscribePage">subscribe new</a>
+   </div>
 
 </div>
 </body>
