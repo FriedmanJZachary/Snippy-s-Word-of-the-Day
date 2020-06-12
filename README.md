@@ -3,12 +3,12 @@ A word-of-the-day emailer that scrapes various websites for word pronunciations,
 
 This project utilizes the following services:
 
--Etymonline
--Flask
--Merriam-Webster Dictionary API
--MySQL
--NoIP (for hostname designation)
--NY Times Word of the Day
--open-dict-data (IPA Lookup)
+1) Etymonline
+2) Flask
+3) Merriam-Webster Dictionary API
+4) MySQL
+5) NoIP (for hostname designation)
+6) NY Times Word of the Day
+7) open-dict-data (IPA Lookup)
 
 While the full implementation of this project can be somewhat involved, a simple, single-file version of the project can be found as simple.py, which requires input of a desired word and email address(es) into the file. The primary implementation can be found as wotd.py, which relies on wordList.txt, rather than the NY Times, for new words. The NY Times version can be found as NYTimes.py. Note that both pof these latter versions require MySQL setup.
