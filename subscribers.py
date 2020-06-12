@@ -13,7 +13,7 @@ def unsubscribePage():
 @app.route('/unsubscribe', methods = ['POST', 'GET'])
 def unsubscribe():
    if request.method == 'POST':
-      user = request.form['nm']
+      user = request.form['nm'].lower().strip()
       return redirect(url_for('goodbye', name = user))
    else:
    		return("ERROR: ILLEGITIMATE ACCESS")
@@ -48,7 +48,7 @@ def subscribePage():
 @app.route('/subscribe', methods = ['POST', 'GET'])
 def subscribe():
    if request.method == 'POST':
-      user = request.form['nm']
+      user = request.form['nm'].lower().strip()
       return redirect(url_for('welcome', name = user))
    else:
    		return("ERROR: ILLEGITIMATE ACCESS")
