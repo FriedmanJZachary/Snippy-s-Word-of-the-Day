@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template
 import MySQLdb
+from lookupFunctions import lookup
 
 app = Flask(__name__)
 
@@ -71,6 +72,38 @@ def welcome(name):
    myresult = mycursor.fetchall()
 
    return render_template('welcome.html', name = name)
+
+
+#ACTIVE LOOKUP#########################################################
+
+@app.route('/lookupPage')
+def lookupPage():
+   return render_template('lookup.html')
+
+
+@app.route('/searchTransition', methods = ['POST', 'GET'])
+def searchTransition():
+   if request.method == 'POST':
+      word = request.form['nm'].lower().strip()
+      return redirect(url_for('searcher', word = word))
+   else:
+   		return("ERROR: ILLEGITIMATE ACCESS")
+         
+@app.route('/searcher/<word>')
+def searcher(word):
+   try:
+      result = lookup(word)
+   except:
+      result = render_template('error.html')
+   return result
+
+
+#HOMEPAGE##############################################################
+
+
+@app.route('/home')
+def home():
+   return render_template('home.html')
 
 if __name__ == '__main__':
    app.run(debug = True)

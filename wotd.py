@@ -55,7 +55,7 @@ html_doc = """
          font-family: Helvetica;
          font-size: 14px;
          margin: -10px 0px;
-         padding: 0px;
+         padding: 10px;
       }
       
       body {
@@ -69,13 +69,14 @@ html_doc = """
       
       #bottombar {
          background-color: #112233;
-         padding: 20px 10px 50px 10px;
+         padding: 20px 10px 10px 10px;
      
       }
 
       .nester {
-        margin: 0px 30px;
-         padding: 50px 5px 0px 5px;
+        margin: 10px 10px;
+        padding: 20px 5px 50px 5px;
+		text-align: center;
       }
       
 
@@ -92,14 +93,13 @@ html_doc = """
 
 <div id = bottombar>
    <p class = understated>This email is part of a mailing list. If you would like to be removed from it or wish to subscribe another email address, please use one of the following links:</p>
- 
-
+   
    <div class = nester>
-      <a class = understated style="float: left;" href="http://snippy.hopto.org:54321/unsubscribePage">unsubscribe</a>
-      <a class = understated style="float: right;" href="http://snippy.hopto.org:54321/subscribePage">subscribe new</a>
+      <a class = understated href="http://snippy.hopto.org:54321/unsubscribePage">unsubscribe</a>
+      <a class = understated href="http://snippy.hopto.org:54321/home">website</a>
    </div>
-
 </div>
+
 </body>
 </html>
 """
