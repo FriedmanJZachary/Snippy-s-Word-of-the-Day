@@ -13,4 +13,4 @@ This project utilizes the following services:
 
 While the full implementation of this project can be somewhat involved, a simple, single-file version of the project can be found as simple.py, which requires input of a desired word and email address(es) into the file. The primary implementation can be found as wotd.py, which relies on wordList.txt (rather than the NY Times) for new words, while the NY Times version can be found as NYTimes.py. Note that both of these latter versions require MySQL setup.
 
-To subscribe to the version of this service currently running, please use the following: http://snippy.hopto.org:54321/subscribePage
+To subscribe to the version of this service currently running, please visit snippythelobster.com
